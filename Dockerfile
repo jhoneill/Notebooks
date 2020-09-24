@@ -52,10 +52,6 @@ RUN dotnet_sdk_version=3.1.301 \
     # Trigger first run experience by running arbitrary cmd
     && dotnet help
 
-# Copy notebooks
-
-COPY ./notebooks/ ${HOME}/notebooks/
-
 # Copy package sources
 
 COPY ./NuGet.config ${HOME}/nuget.config
@@ -63,7 +59,7 @@ COPY ./NuGet.config ${HOME}/nuget.config
 RUN chown -R ${NB_UID} ${HOME}
 USER ${USER}
 
-#Install nteract 
+#Install nteract
 RUN pip install nteract_on_jupyter
 
 # Install lastest build from master branch of Microsoft.DotNet.Interactive from myget
