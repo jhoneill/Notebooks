@@ -108,7 +108,7 @@ function New-PlotlyYbins {
 
 #region plotly Axes
 function New-PlotlyColorBar {
-    [Alias("Layout")]
+    [Alias("ColorBar")]
     [outputType([XPlot.Plotly.Graph+Colorbar])]
     Param (
         [string]$title,
@@ -427,7 +427,7 @@ function New-PlotlyContourTrace {
         [Parameter(ParameterSetName="XIncrementY",Mandatory=$true,Position=0)]
         $x,  # array of xpoints or specify first, x0, & delta dx
         [Parameter(ParameterSetName="YIncrementX",Mandatory=$true)]
-        $x0, 
+        $x0,
         [Parameter(ParameterSetName="YIncrementX",Mandatory=$true)]
         $dx,
         [Parameter(ParameterSetName="YIncrementX",Mandatory=$true)]
@@ -440,14 +440,14 @@ function New-PlotlyContourTrace {
         $z,
         [validateset(
             'aggrnyl',	'agsunset',	'blackbody',	'bluered',	'blues',	    'blugrn',	'bluyl',	'brwnyl',
-            'bugn',	    'bupu',	    'burg',	        'burgyl',	'cividis',  	'darkmint',	'electric',	'emrld',	
+            'bugn',	    'bupu',	    'burg',	        'burgyl',	'cividis',  	'darkmint',	'electric',	'emrld',
             'gnbu',	    'greens',	'greys',	    'hot',	    'inferno',  	'jet',	    'magenta',	'magma',
-            'mint',	    'orrd',	    'oranges',	    'oryel',	'peach',	    'pinkyl',	'plasma',	'plotly3',	
-            'pubu',	    'pubugn',	'purd',	        'purp', 	'purples',	    'purpor',	'rainbow',	'rdbu',	
-            'rdpu',	    'redor',	'reds',	        'sunset',	'sunsetdark',   'teal', 	'tealgrn',	'viridis',	
-            'ylgn',	    'ylgnbu',	'ylorbr',	    'ylorrd',	'algae',	    'amp',  	'deep', 	'dense',	
+            'mint',	    'orrd',	    'oranges',	    'oryel',	'peach',	    'pinkyl',	'plasma',	'plotly3',
+            'pubu',	    'pubugn',	'purd',	        'purp', 	'purples',	    'purpor',	'rainbow',	'rdbu',
+            'rdpu',	    'redor',	'reds',	        'sunset',	'sunsetdark',   'teal', 	'tealgrn',	'viridis',
+            'ylgn',	    'ylgnbu',	'ylorbr',	    'ylorrd',	'algae',	    'amp',  	'deep', 	'dense',
             'gray',	    'haline',	'ice',      	'matter',	'solar',    	'speed',	'tempo',	'thermal',
-            'turbid',   'armyrose', 'brbg',     	'earth',	'fall',	        'geyser',	'prgn', 	'piyg',	
+            'turbid',   'armyrose', 'brbg',     	'earth',	'fall',	        'geyser',	'prgn', 	'piyg',
             'picnic',   'portland', 'puor',	        'rdgy', 	'rdylbu',	    'rdylgn',	'spectral',	'tealrose',
             'temps',    'tropic',	'balance',	    'curl',	    'delta',	    'edge', 	'hsv',  	'icefire',
             'phase',    'twilight', 'mrybm',	    'mygbm'
@@ -467,7 +467,7 @@ function New-PlotlyHeatMapTrace {
         [Parameter(ParameterSetName="XIncrementY",Mandatory=$true,Position=0)]
         $x,  # array of xpoints or specify first, x0, & delta dx
         [Parameter(ParameterSetName="YIncrementX",Mandatory=$true)]
-        $x0, 
+        $x0,
         [Parameter(ParameterSetName="YIncrementX",Mandatory=$true)]
         $dx,
         [Parameter(ParameterSetName="YIncrementX",Mandatory=$true)]
@@ -484,7 +484,7 @@ function New-PlotlyHeatMapTrace {
         [string]$ColorScale,
         $ColorBar
     )
-    if ($ColorBar -is [hashtable]) {$PSBoundParameters['ColorBar'] = New-PlotlyColorBar @ColorBar}     
+    if ($ColorBar -is [hashtable]) {$PSBoundParameters['ColorBar'] = New-PlotlyColorBar @ColorBar}
     New-Object -TypeName XPlot.Plotly.Graph+HeatMap -Property $PSBoundParameters
 }
 
@@ -536,7 +536,7 @@ function New-PlotlyScatterTrace {
         [Parameter(ParameterSetName="XIncrementY",Mandatory=$true,Position=0)]
         $x,  # array of xpoints or specify first, x0, & delta dx
         [Parameter(ParameterSetName="YIncrementX",Mandatory=$true)]
-        $x0, 
+        $x0,
         [Parameter(ParameterSetName="YIncrementX",Mandatory=$true)]
         $dx,
         [Parameter(ParameterSetName="YIncrementX",Mandatory=$true)]
@@ -579,8 +579,8 @@ function New-PlotlyScatterTrace {
         $error_x,
         $error_y
     )
-    if ($error_x -is [hashtable]) {$PSBoundParameters['error_x'] = New-PlotlyXError @error_x} 
-    if ($error_y -is [hashtable]) {$PSBoundParameters['error_y'] = New-PlotlyXError @error_y} 
+    if ($error_x -is [hashtable]) {$PSBoundParameters['error_x'] = New-PlotlyXError @error_x}
+    if ($error_y -is [hashtable]) {$PSBoundParameters['error_y'] = New-PlotlyXError @error_y}
     if ($Marker  -is [hashtable]) {$PSBoundParameters['Marker']  = New-PlotlyMarker @Marker}
     New-Object -TypeName XPlot.Plotly.Graph+Scatter -Property $PSBoundParameters
 }
@@ -594,7 +594,7 @@ function New-PlotlyScatter3DTrace {
         [Parameter(ParameterSetName="XIncrementY",Mandatory=$true,Position=0)]
         $x,  # array of xpoints or specify first, x0, & delta dx
         [Parameter(ParameterSetName="YIncrementX",Mandatory=$true)]
-        $x0, 
+        $x0,
         [Parameter(ParameterSetName="YIncrementX",Mandatory=$true)]
         $dx,
         [Parameter(ParameterSetName="YIncrementX",Mandatory=$true)]
