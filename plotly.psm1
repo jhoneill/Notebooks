@@ -1,3 +1,10 @@
+<#########
+
+MAY NEED TO change .GRAPH+ to just . throughout!
+
+########>
+
+
 #region plotly layout components
 function New-PlotlyFont  {
     [Alias("font")]
@@ -96,14 +103,14 @@ function New-PlotlyXbins {
     [outputType([XPlot.Plotly.Graph+xbins])]
     param ($start, $end, $size)
     new-object -typename xplot.plotly.graph+xbins -property $psboundparameters
-} 
+}
 
 function New-PlotlyYbins {
     [alias('ybins')]
     [outputType([XPlot.Plotly.Graph+ybins])]
     param ($start, $end, $size)
     new-object -typename xplot.plotly.graph+ybins -property $psboundparameters
-} 
+}
 #endregion
 
 #region plotly Axes
