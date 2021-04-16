@@ -1,55 +1,48 @@
-<#########
-
-MAY NEED TO change .GRAPH+ to just . throughout!
-
-########>
-
-
 #region plotly layout components
 function New-PlotlyFont  {
     [Alias("font")]
-    [outputType([XPlot.Plotly.Graph+Font])]
+    [outputType([XPlot.Plotly.Font])]
     param (
         $Size,
         [string]$color,
         [string]$family
     )
-    New-Object -TypeName XPlot.Plotly.Graph+Font -Property $PSBoundParameters
+    New-Object -TypeName XPlot.Plotly.Font -Property $PSBoundParameters
 }
 
 function New-PlotlyLegend {
     [alias('legend')]
-    [outputType([XPlot.Plotly.Graph+Legend])]
+    [outputType([XPlot.Plotly.Legend])]
     param (
         $x,
         $y,
         [string]$bgcolor,
         [string]$borderColor
     )
-    New-Object -TypeName XPlot.Plotly.Graph+Legend -Property $PSBoundParameters
+    New-Object -TypeName XPlot.Plotly.Legend -Property $PSBoundParameters
 }
 
 function New-PlotlyLine {
     [alias('Line')]
-    [outputType([XPlot.Plotly.Graph+Line])]
+    [outputType([XPlot.Plotly.Line])]
     Param (
         [string]$color ,
         $width
         #shape smoothing dash colorscale cauto cmax cmin autocolorscale reversescale
     )
-    New-Object -TypeName XPlot.Plotly.Graph+Line -Property $PSBoundParameters
+    New-Object -TypeName XPlot.Plotly.Line -Property $PSBoundParameters
 }
 
 function New-PlotlyMargin {
     [alias("margin")]
-    [outputType([XPlot.Plotly.Graph+Margin])]
+    [outputType([XPlot.Plotly.Margin])]
     param ($l , $r, $b ,$t, $pad) #autoexpand
-    New-Object -TypeName XPlot.Plotly.Graph+Margin -Property $PSBoundParameters
+    New-Object -TypeName XPlot.Plotly.Margin -Property $PSBoundParameters
 }
 
 function New-PlotlyMarker {
     [alias('Marker')]
-    [outputType([XPlot.Plotly.Graph+Marker])]
+    [outputType([XPlot.Plotly.Marker])]
     Param (
         $Color,
         $size,
@@ -94,29 +87,29 @@ function New-PlotlyMarker {
         [string]$symbol,
         $Line,
         $opacity)
-     if ($Line -is [hashtable]) {$PSBoundParameters['Line'] = New-Object -TypeName XPlot.Plotly.Graph+Line -Property $Line}
-     New-Object -TypeName XPlot.Plotly.Graph+Marker -Property $PSBoundParameters
+     if ($Line -is [hashtable]) {$PSBoundParameters['Line'] = New-Object -TypeName XPlot.Plotly.Line -Property $Line}
+     New-Object -TypeName XPlot.Plotly.Marker -Property $PSBoundParameters
 }
 
 function New-PlotlyXbins {
     [alias('xbins')]
-    [outputType([XPlot.Plotly.Graph+xbins])]
+    [outputType([XPlot.Plotly.xbins])]
     param ($start, $end, $size)
-    new-object -typename xplot.plotly.graph+xbins -property $psboundparameters
+    new-object -typename xplot.plotly.xbins -property $psboundparameters
 }
 
 function New-PlotlyYbins {
     [alias('ybins')]
-    [outputType([XPlot.Plotly.Graph+ybins])]
+    [outputType([XPlot.Plotly.ybins])]
     param ($start, $end, $size)
-    new-object -typename xplot.plotly.graph+ybins -property $psboundparameters
+    new-object -typename xplot.plotly.ybins -property $psboundparameters
 }
 #endregion
 
 #region plotly Axes
 function New-PlotlyColorBar {
     [Alias("ColorBar")]
-    [outputType([XPlot.Plotly.Graph+Colorbar])]
+    [outputType([XPlot.Plotly.Colorbar])]
     Param (
         [string]$title,
         $titleFont,
@@ -139,15 +132,15 @@ function New-PlotlyColorBar {
         [ValidateSet("none", "e", "E", "power", "SI", "B")]
         [string]$ExponentFormat
     )
-    if ($tickFont   -is [hashtable]) {$PSBoundParameters['tickFont']   = New-Object -TypeName XPlot.Plotly.Graph+Font    -Property $tickFont}
-    if ($titleFont  -is [hashtable]) {$PSBoundParameters['titleFont']  = New-Object -TypeName XPlot.Plotly.Graph+Font    -Property $titleFont}
-    New-Object -TypeName XPlot.Plotly.Graph+Colorbar -Property $PSBoundParameters
+    if ($tickFont   -is [hashtable]) {$PSBoundParameters['tickFont']   = New-Object -TypeName XPlot.Plotly.Font    -Property $tickFont}
+    if ($titleFont  -is [hashtable]) {$PSBoundParameters['titleFont']  = New-Object -TypeName XPlot.Plotly.Font    -Property $titleFont}
+    New-Object -TypeName XPlot.Plotly.Colorbar -Property $PSBoundParameters
 }
 
 
 function New-PlotlyXaxis {
     [alias('xaxis')]
-    [outputType([XPlot.Plotly.Graph+Xaxis])]
+    [outputType([XPlot.Plotly.Xaxis])]
     param (
         [string]$title,
         $titleFont,
@@ -186,14 +179,14 @@ function New-PlotlyXaxis {
         [Bool]$AutoRange
         #ranage, rangemode, fixedrange
         )
-    if ($tickFont   -is [hashtable]) {$PSBoundParameters['tickFont']   = New-Object -TypeName XPlot.Plotly.Graph+Font    -Property $tickFont}
-    if ($titleFont  -is [hashtable]) {$PSBoundParameters['titleFont']  = New-Object -TypeName XPlot.Plotly.Graph+Font    -Property $titleFont}
-    New-Object -TypeName XPlot.Plotly.Graph+Xaxis -Property $PSBoundParameters
+    if ($tickFont   -is [hashtable]) {$PSBoundParameters['tickFont']   = New-Object -TypeName XPlot.Plotly.Font    -Property $tickFont}
+    if ($titleFont  -is [hashtable]) {$PSBoundParameters['titleFont']  = New-Object -TypeName XPlot.Plotly.Font    -Property $titleFont}
+    New-Object -TypeName XPlot.Plotly.Xaxis -Property $PSBoundParameters
 }
 
 function New-PlotlyYaxis {
     [alias('yaxis')]
-    [outputType([XPlot.Plotly.Graph+Yaxis])]
+    [outputType([XPlot.Plotly.Yaxis])]
     param (
         [string]$title,
         $titleFont,
@@ -229,14 +222,14 @@ function New-PlotlyYaxis {
         [bool]$autotick,
         [Bool]$AutoRange
     )
-    if ($tickFont   -is [hashtable]) {$PSBoundParameters['tickFont']   = New-Object -TypeName XPlot.Plotly.Graph+Font    -Property $tickFont}
-    if ($titleFont  -is [hashtable]) {$PSBoundParameters['titleFont']  = New-Object -TypeName XPlot.Plotly.Graph+Font    -Property $titleFont}
-    New-Object -TypeName XPlot.Plotly.Graph+Yaxis -Property $PSBoundParameters
+    if ($tickFont   -is [hashtable]) {$PSBoundParameters['tickFont']   = New-Object -TypeName XPlot.Plotly.Font    -Property $tickFont}
+    if ($titleFont  -is [hashtable]) {$PSBoundParameters['titleFont']  = New-Object -TypeName XPlot.Plotly.Font    -Property $titleFont}
+    New-Object -TypeName XPlot.Plotly.Yaxis -Property $PSBoundParameters
 }
 
 function New-PlotlyAngularaxis {
     [alias('angularaxis')]
-    [outputType([XPlot.Plotly.Graph+Angularaxis])]
+    [outputType([XPlot.Plotly.Angularaxis])]
     param (
         [string]$tickcolor,
         [string]$ticksuffix,
@@ -244,12 +237,12 @@ function New-PlotlyAngularaxis {
         [Bool]$showline,
         [Bool]$showtickLabels
     )
-    New-Object -TypeName XPlot.Plotly.Graph+Angularaxis -Property $PSBoundParameters
+    New-Object -TypeName XPlot.Plotly.Angularaxis -Property $PSBoundParameters
 }
 
 function New-PlotlyRadialaxis {
     [alias('Radialaxis')]
-    [outputType([XPlot.Plotly.Graph+Radialaxis])]
+    [outputType([XPlot.Plotly.Radialaxis])]
     param (
         [string]$tickcolor,
         [string]$ticksuffix,
@@ -257,9 +250,9 @@ function New-PlotlyRadialaxis {
         [Bool]$showline,
         [Bool]$showtickLabels
     )
-    if ($tickFont   -is [hashtable]) {$PSBoundParameters['tickFont']   = New-Object -TypeName XPlot.Plotly.Graph+Font    -Property $tickFont}
-    if ($titleFont  -is [hashtable]) {$PSBoundParameters['titleFont']  = New-Object -TypeName XPlot.Plotly.Graph+Font    -Property $titleFont}
-    New-Object -TypeName XPlot.Plotly.Graph+Radialaxis -Property $PSBoundParameters
+    if ($tickFont   -is [hashtable]) {$PSBoundParameters['tickFont']   = New-Object -TypeName XPlot.Plotly.Font    -Property $tickFont}
+    if ($titleFont  -is [hashtable]) {$PSBoundParameters['titleFont']  = New-Object -TypeName XPlot.Plotly.Font    -Property $titleFont}
+    New-Object -TypeName XPlot.Plotly.Radialaxis -Property $PSBoundParameters
 }
 
 <#
@@ -312,9 +305,9 @@ function New-PlotlyLayout {
         #separators hidesources smith dragmode hovermode scene geo #
 
     )
-    if ($Margin      -is [hashtable]) {$PSBoundParameters['Margin']      = New-Object -TypeName XPlot.Plotly.Graph+Margin -Property $Margin}
-    if ($Font        -is [hashtable]) {$PSBoundParameters['Font']        = New-Object -TypeName XPlot.Plotly.Graph+Font   -Property $Font}
-    if ($Legend      -is [hashtable]) {$PSBoundParameters['Legend']      = New-Object -TypeName XPlot.Plotly.Graph+Legend -Property $Legend}
+    if ($Margin      -is [hashtable]) {$PSBoundParameters['Margin']      = New-Object -TypeName XPlot.Plotly.Margin -Property $Margin}
+    if ($Font        -is [hashtable]) {$PSBoundParameters['Font']        = New-Object -TypeName XPlot.Plotly.Font   -Property $Font}
+    if ($Legend      -is [hashtable]) {$PSBoundParameters['Legend']      = New-Object -TypeName XPlot.Plotly.Legend -Property $Legend}
     if ($YAxis       -is [hashtable]) {$PSBoundParameters['YAxis']       = New-PlotlyYAxis       @YAxis}
     if ($XAxis       -is [hashtable]) {$PSBoundParameters['XAxis']       = New-PlotlyXAxis       @XAxis}
     if ($Radialaxis  -is [hashtable]) {$PSBoundParameters['Radialaxis']  = New-PlotlyRadialAxis  @Radialaxis}
@@ -323,11 +316,11 @@ function New-PlotlyLayout {
 }
 
 #region ploty "trace" objects i.e. graphs
-#Note these could be built from a script using [XPlot.Plotly.Graph+Bar].DeclaredProperties.name etc
+#Note these could be built from a script using [XPlot.Plotly.Bar].DeclaredProperties.name etc
 
 Function New-PlotlyXError {
     [alias('error_x')]
-    [outputType([XPlot.Plotly.Graph+Error_x])]
+    [outputType([XPlot.Plotly.Error_x])]
     param(
     [ValidateSet("percent", "constant", "sqrt", "data")]
     $Type,
@@ -344,12 +337,12 @@ Function New-PlotlyXError {
     $Thickness,
     $width
     )
-    New-Object -TypeName XPlot.Plotly.Graph+Error_x -Property $PSBoundParameters
+    New-Object -TypeName XPlot.Plotly.Error_x -Property $PSBoundParameters
 }
 
 Function New-PlotlyYError {
     [alias('error_y')]
-    [outputType([XPlot.Plotly.Graph+Error_y])]
+    [outputType([XPlot.Plotly.Error_y])]
     param(
     [ValidateSet("percent", "constant", "sqrt", "data")]
     $Type,
@@ -366,12 +359,12 @@ Function New-PlotlyYError {
     $Thickness,
     $width
     )
-    New-Object -TypeName XPlot.Plotly.Graph+Error_Y -Property $PSBoundParameters
+    New-Object -TypeName XPlot.Plotly.Error_Y -Property $PSBoundParameters
 }
 
 function New-PlotlyAreaTrace {
     [alias('Area')]
-    [outputType([XPlot.Plotly.Graph+Area])]
+    [outputType([XPlot.Plotly.Area])]
     param (
         $r,
         $t,
@@ -379,12 +372,12 @@ function New-PlotlyAreaTrace {
         $Marker
     )
     if ($Marker -is [hashtable]) {$PSBoundParameters['Marker'] = New-PlotlyMarker @Marker}
-    New-Object -TypeName XPlot.Plotly.Graph+Area -Property $PSBoundParameters
+    New-Object -TypeName XPlot.Plotly.Area -Property $PSBoundParameters
 }
 
 function New-PlotlyBarTrace {
     [alias('Bar')]
-    [outputType([XPlot.Plotly.Graph+Bar])]
+    [outputType([XPlot.Plotly.Bar])]
     Param ($x,
            $y,
            [string]$name,
@@ -392,12 +385,12 @@ function New-PlotlyBarTrace {
            $Orientation
     )
     if ($Marker -is [hashtable]) {$PSBoundParameters['Marker'] = New-PlotlyMarker @Marker}
-     New-Object -TypeName XPlot.Plotly.Graph+Bar -Property $PSBoundParameters
+     New-Object -TypeName XPlot.Plotly.Bar -Property $PSBoundParameters
 }
 
 function New-PlotlyBoxTrace {
     [alias('Box')]
-    [outputType([XPlot.Plotly.Graph+Box])]
+    [outputType([XPlot.Plotly.Box])]
     param (
         $x,
         $y,
@@ -408,12 +401,12 @@ function New-PlotlyBoxTrace {
         $Marker
     )
     if ($Marker -is [hashtable]) {$PSBoundParameters['Marker'] = New-PlotlyMarker @Marker}
-    New-Object -TypeName XPlot.Plotly.Graph+Box -Property $PSBoundParameters
+    New-Object -TypeName XPlot.Plotly.Box -Property $PSBoundParameters
 }
 
 function NewPlotlyCandlestickTrace {
     [alias('Candlestick')]
-    [outputType([XPlot.Plotly.Graph+Candlestick])]
+    [outputType([XPlot.Plotly.Candlestick])]
     param (
         $x,
         $open,
@@ -422,13 +415,13 @@ function NewPlotlyCandlestickTrace {
         $low,
         $Text
     )
-    New-Object -TypeName XPlot.Plotly.Graph+Candlestick -Property $PSBoundParameters
+    New-Object -TypeName XPlot.Plotly.Candlestick -Property $PSBoundParameters
 }
 
 function New-PlotlyContourTrace {
     [cmdletbinding(DefaultParameterSetName="NoXorY")]
     [Alias('Contour')]
-    [outputType([XPlot.Plotly.Graph+Heatmap])]
+    [outputType([XPlot.Plotly.Heatmap])]
     Param (
         [Parameter(ParameterSetName="XAndY",      Mandatory=$true,Position=0)]
         [Parameter(ParameterSetName="XIncrementY",Mandatory=$true,Position=0)]
@@ -462,13 +455,13 @@ function New-PlotlyContourTrace {
         [string]$ColorScale,
         $ColorBar
     )
-    New-Object -TypeName XPlot.Plotly.Graph+Contour -Property $PSBoundParameters
+    New-Object -TypeName XPlot.Plotly.Contour -Property $PSBoundParameters
 }
 
 function New-PlotlyHeatMapTrace {
     [cmdletbinding(DefaultParameterSetName="XAndY")]
     [alias('Heatmap')]
-    [outputType([XPlot.Plotly.Graph+Heatmap])]
+    [outputType([XPlot.Plotly.Heatmap])]
     param (
         [Parameter(ParameterSetName="XAndY",      Mandatory=$true,Position=0)]
         [Parameter(ParameterSetName="XIncrementY",Mandatory=$true,Position=0)]
@@ -492,13 +485,13 @@ function New-PlotlyHeatMapTrace {
         $ColorBar
     )
     if ($ColorBar -is [hashtable]) {$PSBoundParameters['ColorBar'] = New-PlotlyColorBar @ColorBar}
-    New-Object -TypeName XPlot.Plotly.Graph+HeatMap -Property $PSBoundParameters
+    New-Object -TypeName XPlot.Plotly.HeatMap -Property $PSBoundParameters
 }
 
 
 function New-PlotlyHistogramTrace {
     [Alias('Histogram')]
-     [outputType([XPlot.Plotly.Graph+Histogram])]
+     [outputType([XPlot.Plotly.Histogram])]
     param(
         $x,
         $dx,
@@ -520,24 +513,24 @@ function New-PlotlyHistogramTrace {
     )
     if ($xbins -is [hashtable]) {$psboundparameters['xbins'] = New-PlotlyXbins @xbins}
     if ($ybins -is [hashtable]) {$psboundparameters['ybins'] = New-PlotlyYbins @ybins}
-   New-Object -typename xplot.plotly.graph+histogram -property $PSBoundParameters
+   New-Object -typename xplot.plotly.histogram -property $PSBoundParameters
 }
 
 
 function New-PlotlyPieTrace {
     [alias('Pie')]
-   [outputType([XPlot.Plotly.Graph+Pie])]
+   [outputType([XPlot.Plotly.Pie])]
     Param(
         $Values,
         $Labels
     )
-    New-Object -TypeName XPlot.Plotly.Graph+Pie -Property $PSBoundParameters
+    New-Object -TypeName XPlot.Plotly.Pie -Property $PSBoundParameters
 }
 
 function New-PlotlyScatterTrace {
     [cmdletbinding(DefaultParameterSetName="XAndY")]
     [alias('Scatter')]
-    [outputType([XPlot.Plotly.Graph+Scatter])]
+    [outputType([XPlot.Plotly.Scatter])]
     param (
         [Parameter(ParameterSetName="XAndY",      Mandatory=$true,Position=0)]
         [Parameter(ParameterSetName="XIncrementY",Mandatory=$true,Position=0)]
@@ -589,13 +582,13 @@ function New-PlotlyScatterTrace {
     if ($error_x -is [hashtable]) {$PSBoundParameters['error_x'] = New-PlotlyXError @error_x}
     if ($error_y -is [hashtable]) {$PSBoundParameters['error_y'] = New-PlotlyXError @error_y}
     if ($Marker  -is [hashtable]) {$PSBoundParameters['Marker']  = New-PlotlyMarker @Marker}
-    New-Object -TypeName XPlot.Plotly.Graph+Scatter -Property $PSBoundParameters
+    New-Object -TypeName XPlot.Plotly.Scatter -Property $PSBoundParameters
 }
 
 function New-PlotlyScatter3DTrace {
     [cmdletbinding(DefaultParameterSetName="XAndY")]
     [alias('Scatter3D')]
-    [outputType([XPlot.Plotly.Graph+Scatter3d])]
+    [outputType([XPlot.Plotly.Scatter3d])]
     param (
         [Parameter(ParameterSetName="XAndY",      Mandatory=$true,Position=0)]
         [Parameter(ParameterSetName="XIncrementY",Mandatory=$true,Position=0)]
@@ -619,12 +612,12 @@ function New-PlotlyScatter3DTrace {
         $Marker
     )
     if ($Marker -is [hashtable]) {$PSBoundParameters['Marker'] = New-PlotlyMarker @Marker}
-    New-Object -TypeName XPlot.Plotly.Graph+Scatter3d -Property $PSBoundParameters
+    New-Object -TypeName XPlot.Plotly.Scatter3d -Property $PSBoundParameters
 }
 
 function New-PlotlySurfaceTrace {
     [Alias('Surface')]
-    [outputType([XPlot.Plotly.Graph+Surface])]
+    [outputType([XPlot.Plotly.Surface])]
     Param (
         $x,  # array of xpoints or specify first, x0, & delta dx
         $y,  # array of xpoints or specify first, y0. & delta dy
@@ -633,7 +626,7 @@ function New-PlotlySurfaceTrace {
         [string]$ColorScale,
         $ColorBar
     )
-    New-Object -TypeName XPlot.Plotly.Graph+Surface -Property $PSBoundParameters
+    New-Object -TypeName XPlot.Plotly.Surface -Property $PSBoundParameters
 }
 #endregion
 
@@ -643,14 +636,14 @@ function plot {
     [Alias("sb")]
     [scriptblock]$ScriptBlock,
     [Parameter(ParameterSetName='Traces',Mandatory=$true, Position=0 ,ValueFromPipeline=$true)]
-    [XPlot.Plotly.Graph+trace[]]$Trace,
+    [XPlot.Plotly.trace[]]$Trace,
     $Layout,
     [String]$Title = "",
     $Width,
     $Height
     )
     begin   {
-        $traces = [System.Collections.Generic.List[XPlot.Plotly.Graph+Trace]]::new()
+        $traces = [System.Collections.Generic.List[XPlot.Plotly.Trace]]::new()
         if ($ScriptBlock) {
           Invoke-Command -ScriptBlock $ScriptBlock | ForEach-Object {$traces.Add($_) }
         }
