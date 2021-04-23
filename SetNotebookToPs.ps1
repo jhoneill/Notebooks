@@ -2,7 +2,8 @@ param (
     [Parameter(ValueFromPipeline = $true)]
     $Path,
     $OutputPath,
-    [switch]$FixOutput
+    [switch]$FixOutput,
+    [switch]$SetMetaData
 )
 process {
     $nb = Get-Content $Path | ConvertFrom-Json -Depth 10
@@ -29,6 +30,13 @@ process {
             $cell.outputs = ,$h
         }
     }
+
+    if ($SetMetaData) {
+        foreach ($cell in  $j.cells.Where({$_.cell_type -eq "code"})) {
+            $cell['metadata'] =  @{'dotnet_interactive' = @{'language'='pwsh'} }
+        }
+    }
+
     if (-not $OutputPath) {$OutputPath = $Path}
     ConvertTo-Json $nb -Depth 10 | Out-File -Encoding utf8 -path $OutputPath
 }
