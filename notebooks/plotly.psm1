@@ -137,7 +137,6 @@ function New-PlotlyColorBar {
     New-Object -TypeName XPlot.Plotly.Colorbar -Property $PSBoundParameters
 }
 
-
 function New-PlotlyXaxis {
     [alias('xaxis')]
     [outputType([XPlot.Plotly.Xaxis])]
@@ -488,7 +487,6 @@ function New-PlotlyHeatMapTrace {
     New-Object -TypeName XPlot.Plotly.HeatMap -Property $PSBoundParameters
 }
 
-
 function New-PlotlyHistogramTrace {
     [Alias('Histogram')]
      [outputType([XPlot.Plotly.Histogram])]
@@ -516,10 +514,9 @@ function New-PlotlyHistogramTrace {
    New-Object -typename xplot.plotly.histogram -property $PSBoundParameters
 }
 
-
 function New-PlotlyPieTrace {
     [alias('Pie')]
-   [outputType([XPlot.Plotly.Pie])]
+    [outputType([XPlot.Plotly.Pie])]
     Param(
         $Values,
         $Labels
@@ -631,7 +628,7 @@ function New-PlotlySurfaceTrace {
 #endregion
 
 function plot {
-    param  (
+    param   (
     [Parameter(ParameterSetName='ScriptBlock',Mandatory=$true, Position=0)]
     [Alias("sb")]
     [scriptblock]$ScriptBlock,
