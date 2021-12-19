@@ -99,3 +99,57 @@ Function Out-Cell{
         [Microsoft.DotNet.Interactive.Kernel]::HTML($html) | Out-Display -passthru:$PassThru
     }
 }
+function Write-Progress {
+    param (
+        [Parameter(Mandatory=$true,position = 0)]
+        [string]$Activity,
+        [Parameter(position = 1)]
+        [string]$Status,
+        [string]$CurrentOperation,
+        [int]$PercentComplete,
+        [int]$SecondsRemaining,
+        [switch]$Completed
+    )
+    if ($status)            {$bar = "{0,-100}"  -f $Status}
+    else                    {$bar = "{0,-100}"  -f $CurrentOperation} #even if it is empty!
+    if ($PercentComplete)   {$bar = $PSStyle.Background.blue + $PSStyle.Foreground.BrightWhite +
+                                    ($bar -replace "(?<=^.{$percentComplete})", ($PSStyle.Reset + $PSStyle.Foreground.blue))
+    }
+    if ($SecondsRemaining) {$bar +=  $SecondsRemaining.tostring("0s") }
+    if ($Completed)        {$bar = ' '}
+    else                   {$bar = $PSStyle.Foreground.blue + $Activity +  "[" + $bar + "]" + $PSStyle.Reset}
+
+    if ($global:ProgressBar -and $global:contextID -eq  [Microsoft.DotNet.Interactive.KernelInvocationContext]::Current.Command.Properties.id) {
+        $global:ProgressBar.Update($bar)
+    }
+    else {
+        $global:ProgressBar = $bar | Out-Display -PassThru -MimeType text/plain
+        $global:contextID   =  [Microsoft.DotNet.Interactive.KernelInvocationContext]::Current.Command.Properties.id
+    }
+}
+
+function Out-Mermaid {
+    [alias('Mermaid')]
+    param (
+        [parameter(ValueFromPipeline=$true,Mandatory=$true,Position=0)]
+        $Text
+    )
+    begin {
+        $mermaid = ""
+        $guid    = ([guid]::NewGuid().ToString() -replace '\W','')
+        $html    = @"
+<div style="background-color:white;"><script type="text/javascript">
+loadMermaid_$guid = () => {(require.config({ 'paths': { 'context': '1.0.252001', 'mermaidUri' : 'https://colombod.github.io/dotnet-interactive-cdn/extensionlab/1.0.252001/mermaid/mermaidapi', 'urlArgs': 'cacheBuster=7de2aec4927849b5a989d2305cf957bc' }}) || require)(['mermaidUri'], (mermaid) => {let renderTarget = document.getElementById('$guid'); mermaid.render( 'mermaid_$guid', ``~~Mermaid~~``, g => {renderTarget.innerHTML = g  });}, (error) => {console.log(error);});}
+if ((typeof(require) !==  typeof(Function)) || (typeof(require.config) !== typeof(Function))) {
+    let require_script = document.createElement('script');
+    require_script.setAttribute('src', 'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js');
+    require_script.setAttribute('type', 'text/javascript');
+    require_script.onload = function() {loadMermaid_$guid();};
+    document.getElementsByTagName('head')[0].appendChild(require_script);
+}
+else {loadMermaid_$guid();}
+</script><div id="$guid"></div></div>
+"@  }
+    process {$Mermaid +=  ("`r`n" + $Text -replace '^[\r\n]+','' -replace '[\r\n]+$','') }
+    end     {[Microsoft.DotNet.Interactive.Kernel]::HTML(($html -replace  '~~Mermaid~~',$mermaid ))  | Out-Display }
+}
