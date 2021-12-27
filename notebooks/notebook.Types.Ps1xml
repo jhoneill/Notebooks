@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Types>
+  <Type><Name>system.Data.DataTable</Name>
+    <Members>
+         <ScriptMethod><Name>ToTdr</Name><Script>
+            try {$schema    = [Microsoft.DotNet.Interactive.Formatting.TabularData.TableSchema]::New() }
+            catch {throw "Type not loaded; have you run '#r `"nuget:Microsoft.DotNet.Interactive.ExtensionLab, *-*`"' in a C# Cell? " ; return}
+            if ($this.PrimaryKey)  {$schema.PrimaryKey = $this.PrimaryKey}
+            foreach ($col in $this.Columns) {
+                switch  ($col.DataType.Name) {
+                    "string"   {$datatype='String'  }
+                    "Boolean"  {$dataType='Boolean' }
+                    "DateTime" {$dataType='Datetime'}
+                    "Double"   {$dataType='Number'  }
+                    "Single"   {$dataType='Number'  }
+                    "Byte"     {$dataType='Integer' }
+                    "Int16"    {$dataType='Integer' }
+                    "Int32"    {$dataType='Integer' }
+                    "Int64"    {$dataType='Integer' }
+                    default    {$dataType='Object'  }
+                }
+                $schema.Fields.Add([Microsoft.DotNet.Interactive.Formatting.TabularData.TableSchemaFieldDescriptor]::new($col.ColumnName, $dataType, '', '') )
+            }
+            $dataItems   = [System.Collections.Generic.List[System.Collections.Generic.Dictionary[string,object]]]::new()
+            foreach ($row in $this.Rows) {
+                $dict = [System.Collections.Generic.Dictionary[string,object]]::new()
+                foreach ($c in $this.Columns.ColumnName) {$dict.add($c, $row.$c)}
+                $dataItems.Add($dict)
+            }
+            return [Microsoft.DotNet.Interactive.Formatting.TabularData.TabularDataResource]::new($schema,$dataItems)
+         </Script></ScriptMethod>
+
+        <ScriptMethod><Name>ExploreWithNteract</Name><Script>
+            try   {$Null = [Microsoft.DotNet.Interactive.Kernel]::display([Microsoft.DotNet.Interactive.ExtensionLab.NteractDataExplorer]::new($this.ToTdr()))}
+            catch {throw "Error creating the extension lab explorer have you run '#r `"nuget:Microsoft.DotNet.Interactive.ExtensionLab, *-*`"' in a C# Cell? " ; return}
+         </Script></ScriptMethod>
+         <ScriptMethod><Name>ExploreWithSandDance</Name><Script>
+            try   {$Null = [Microsoft.DotNet.Interactive.Kernel]::display([Microsoft.DotNet.Interactive.ExtensionLab.SandDanceDataExplorer]::new($this.ToTdr()))}
+            catch {throw "Error creating the extension lab explorer have you run '#r `"nuget:Microsoft.DotNet.Interactive.ExtensionLab, *-*`"' in a C# Cell? " ; return}
+         </Script></ScriptMethod>
+    </Members>
+  </Type>
+</Types>
