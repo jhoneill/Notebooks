@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Types>
+  <Type><Name>Microsoft.DotNet.Interactive.Formatting.TabularData.TabularDataResource</Name>
+    <Members>
+ <ScriptMethod><Name>ExploreWithNteract</Name><Script>
+            try   {$Null = [Microsoft.DotNet.Interactive.Kernel]::display([nteract.InteractiveExtension.NteractDataExplorer]::new($this))}
+            catch {throw "Error creating the data explorer has it been correctly imported " ; return}
+         </Script></ScriptMethod>
+     <ScriptMethod><Name>ExploreWithSandDance</Name><Script>
+            try   {$Null = [Microsoft.DotNet.Interactive.Kernel]::display([sanddance.InteractiveExtension.sandDanceDataExplorer]::new($this))}
+            catch {throw "Error creating the data explorer has it been correctly imported " ; return}
+         </Script></ScriptMethod>
+
+   </Members>
+  </Type>
   <Type><Name>system.Data.DataTable</Name>
     <Members>
          <ScriptMethod><Name>ToTdr</Name><Script>
@@ -31,11 +44,13 @@
          </Script></ScriptMethod>
 
         <ScriptMethod><Name>ExploreWithNteract</Name><Script>
-            try   {$Null = [Microsoft.DotNet.Interactive.Kernel]::display([Microsoft.DotNet.Interactive.ExtensionLab.NteractDataExplorer]::new($this.ToTdr()))}
+#           try   {$Null = [Microsoft.DotNet.Interactive.Kernel]::display([Microsoft.DotNet.Interactive.ExtensionLab.NteractDataExplorer]::new($this.ToTdr()))}
+            try   {$this.ToTdr().ExploreWithNteract}
             catch {throw "Error creating the extension lab explorer have you run '#r `"nuget:Microsoft.DotNet.Interactive.ExtensionLab, *-*`"' in a C# Cell? " ; return}
          </Script></ScriptMethod>
          <ScriptMethod><Name>ExploreWithSandDance</Name><Script>
-            try   {$Null = [Microsoft.DotNet.Interactive.Kernel]::display([Microsoft.DotNet.Interactive.ExtensionLab.SandDanceDataExplorer]::new($this.ToTdr()))}
+          # try   {$Null = [Microsoft.DotNet.Interactive.Kernel]::display([Microsoft.DotNet.Interactive.ExtensionLab.SandDanceDataExplorer]::new($this.ToTdr()))}
+            try   {$this.ToTdr().ExploreWithSandDance}
             catch {throw "Error creating the extension lab explorer have you run '#r `"nuget:Microsoft.DotNet.Interactive.ExtensionLab, *-*`"' in a C# Cell? " ; return}
          </Script></ScriptMethod>
     </Members>

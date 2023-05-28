@@ -366,23 +366,51 @@ function Out-Mermaid    {
     )
     begin   {
         $mermaid = ""
-        $guid    = ([guid]::NewGuid().ToString() -replace '\W','')
-        $html    = @"
-<div style="background-color:white;"><script type="text/javascript">
-loadMermaid_$guid = () => {(require.config({ 'paths': { 'context': '1.0.252001', 'mermaidUri' : 'https://colombod.github.io/dotnet-interactive-cdn/extensionlab/1.0.252001/mermaid/mermaidapi', 'urlArgs': 'cacheBuster=7de2aec4927849b5a989d2305cf957bc' }}) || require)(['mermaidUri'], (mermaid) => {let renderTarget = document.getElementById('$guid'); mermaid.render( 'mermaid_$guid', ``~~Mermaid~~``, g => {renderTarget.innerHTML = g  });}, (error) => {console.log(error);});}
-if ((typeof(require) !==  typeof(Function)) || (typeof(require.config) !== typeof(Function))) {
-    let require_script = document.createElement('script');
-    require_script.setAttribute('src', 'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js');
-    require_script.setAttribute('type', 'text/javascript');
-    require_script.onload = function() {loadMermaid_$guid();};
-    document.getElementsByTagName('head')[0].appendChild(require_script);
-}
-else {loadMermaid_$guid();}
-</script><div id="$guid"></div></div>
-"@  }
+#         $guid    = ([guid]::NewGuid().ToString() -replace '\W','')
+#         $html    = @"
+# <div style="background-color:white;"><script type="text/javascript">
+# loadMermaid_$guid = () => {(require.config({ 'paths': { 'context': '1.0.252001', 'mermaidUri' : 'https://colombod.github.io/dotnet-interactive-cdn/extensionlab/1.0.252001/mermaid/mermaidapi', 'urlArgs': 'cacheBuster=7de2aec4927849b5a989d2305cf957bc' }}) || require)(['mermaidUri'], (mermaid) => {let renderTarget = document.getElementById('$guid'); mermaid.render( 'mermaid_$guid', ``~~Mermaid~~``, g => {renderTarget.innerHTML = g  });}, (error) => {console.log(error);});}
+# if ((typeof(require) !==  typeof(Function)) || (typeof(require.config) !== typeof(Function))) {
+#     let require_script = document.createElement('script');
+#     require_script.setAttribute('src', 'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js');
+#     require_script.setAttribute('type', 'text/javascript');
+#     require_script.onload = function() {loadMermaid_$guid();};
+#     document.getElementsByTagName('head')[0].appendChild(require_script);
+# }
+# else {loadMermaid_$guid();}
+# </script><div id="$guid"></div></div>
+# "@
+    }
     process {$Mermaid +=  ("`r`n" + $Text -replace '^[\r\n]+','' -replace '[\r\n]+$','') }
-    end     {Write-Notebook -Html  ($html -replace  '~~Mermaid~~',$mermaid ) }
+    end     {
+#             Write-Notebook -Html  ($html -replace  '~~Mermaid~~',$mermaid )
+    $Kernel = [Microsoft.DotNet.Interactive.Mermaid.MermaidKernel]::Current.ParentKernel | where name -eq "mermaid"
+    $command = [Microsoft.DotNet.Interactive.Commands.SubmitCode]::new($mermaid)
+    $task = $Kernel.SendAsync($command)
+    }
 }
+
+
+<#
+TO DO build graphviz function along similar lines to mermaid.
+
+
+$do =  [DotLanguage.InteractiveExtension.DotLanguageKernel]::Current.ParentKernel | where name -eq "dot"
+
+$t = $do.SendAsync([Microsoft.DotNet.Interactive.Commands.SubmitCode]::new(@"
+graph ethane {
+    C_0 -- H_0 [type=s];
+    C_0 -- H_1 [type=s];
+    C_0 -- H_2 [type=s];
+    C_0 -- C_1 [type=s];
+    C_1 -- H_3 [type=s];
+    C_1 -- H_4 [type=s];
+    C_1 -- H_5 [type=s];
+}
+"@)   )
+
+#>
+
 
 function Out-TreeView   {
     <#
@@ -525,3 +553,25 @@ function ConvertTo-TabularDataResource {
         [Microsoft.DotNet.Interactive.Formatting.TabularData.TabularDataResource]::new($schema,$dataItems)
     }
 }
+
+$nteractDLL = Get-ChildItem -Path (join-path $env:USERPROFILE ".nuget\packages\nteract.interactiveextension\") -Recurse -include *.dll  |
+     ForEach-Object {[System.Diagnostics.FileVersionInfo]::GetVersionInfo($_.FullName)} |
+        Sort-Object FileVersion  |
+            Select-object -last 1
+if (-not $nteractDLL)  { Write-Error "Could not find the nteractdll you may need to run ' #r `"nuget: nteract.InteractiveExtension, 1.0.91`" ' in a c# cell" }
+else {
+    Add-Type -Path $nteractDLL.FileName
+    [nteract.InteractiveExtension.KernelExtension]::Load([Microsoft.DotNet.Interactive.KernelInvocationContext]::Current.HandlingKernel.RootKernel)
+}
+
+$sanddanceDLL = Get-ChildItem -Path (join-path $env:USERPROFILE ".nuget\packages\sanddance.interactiveextension\") -Recurse -include *.dll  |
+     ForEach-Object {[System.Diagnostics.FileVersionInfo]::GetVersionInfo($_.FullName)} |
+        Sort-Object FileVersion  |
+            Select-object -last 1
+if (-not $sanddanceDLL)  { Write-Error "Could not find the sanddancedll you may need to run ' #r `"nuget: sanddance.InteractiveExtension`" ' in a c# cell" }
+else {
+    Add-Type -Path $sanddanceDLL.FileName
+    [sanddance.InteractiveExtension.KernelExtension]::Load([Microsoft.DotNet.Interactive.KernelInvocationContext]::Current.HandlingKernel.RootKernel)
+}
+
+Update-TypeData -AppendPath (Join-path $PSScriptRoot "notebook.Types.Ps1xml")
