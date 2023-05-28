@@ -1,7 +1,7 @@
 using namespace 'System.Collections.Generic'
 using namespace 'Microsoft.DotNet.Interactive'
 using namespace 'Microsoft.DotNet.Interactive.Formatting.TabularData'
-function Write-Notebook {
+function Write-Notebook  {
     <#
       .SYNOPSIS
         Writes to  the output part of the current cell (a streamlined version of Out-Display)
@@ -47,7 +47,7 @@ function Write-Notebook {
     }
 }
 
-function ConvertTo-Grid {
+function ConvertTo-Grid  {
     param   (
         [parameter(ValueFromPipeline=$true, Position=0, Mandatory=$true)]
         $InputObject,
@@ -151,7 +151,7 @@ function ConvertTo-Grid {
     }
 }
 
-function Out-Cell       {
+function Out-Cell        {
     <#
       .SYNOPSIS
         Outputs a notebook cell - takes a script block, or html or objects to format as a list/table
@@ -300,7 +300,7 @@ function Out-Cell       {
     }
 }
 
-function Write-Progress {
+function Write-Progress  {
     <#
       .SYNOPSIS
         Notebook friendly replacement for the Write-Progress cmdlet. Similar to the "Minimal" view implemented in PowerShell 7.2
@@ -333,12 +333,10 @@ function Write-Progress {
     }
 }
 
-function Out-Mermaid    {
+function Out-Mermaid     {
     <#
       .DESCRIPTION
         Accepts a mermaid chart definition as a parameter (example with the definition) or from the  pipeline
-        and outputs the minimum correct HTML / Javascript but  **depends on the kernel extension being loaded**
-
         For examples see the mermaid home page at https://mermaid-js.github.io/mermaid/#/
         Has an alias of `Mermaid` it can be called in a more dsl-y style);
 
@@ -364,8 +362,7 @@ function Out-Mermaid    {
         [parameter(ValueFromPipeline=$true,Mandatory=$true,Position=0)]
         $Text
     )
-    begin   {
-        $mermaid = ""
+    begin   {$mermaid = "" }
 #         $guid    = ([guid]::NewGuid().ToString() -replace '\W','')
 #         $html    = @"
 # <div style="background-color:white;"><script type="text/javascript">
@@ -380,39 +377,65 @@ function Out-Mermaid    {
 # else {loadMermaid_$guid();}
 # </script><div id="$guid"></div></div>
 # "@
-    }
+#    }
     process {$Mermaid +=  ("`r`n" + $Text -replace '^[\r\n]+','' -replace '[\r\n]+$','') }
     end     {
 #             Write-Notebook -Html  ($html -replace  '~~Mermaid~~',$mermaid )
-    $Kernel = [Microsoft.DotNet.Interactive.Mermaid.MermaidKernel]::Current.ParentKernel | where name -eq "mermaid"
+    $Kernel  = [Microsoft.DotNet.Interactive.Mermaid.MermaidKernel]::Current.ParentKernel | where name -eq "mermaid"
     $command = [Microsoft.DotNet.Interactive.Commands.SubmitCode]::new($mermaid)
     $task = $Kernel.SendAsync($command)
     }
 }
 
-
-<#
-TO DO build graphviz function along similar lines to mermaid.
-
-
-$do =  [DotLanguage.InteractiveExtension.DotLanguageKernel]::Current.ParentKernel | where name -eq "dot"
-
-$t = $do.SendAsync([Microsoft.DotNet.Interactive.Commands.SubmitCode]::new(@"
-graph ethane {
-    C_0 -- H_0 [type=s];
-    C_0 -- H_1 [type=s];
-    C_0 -- H_2 [type=s];
-    C_0 -- C_1 [type=s];
-    C_1 -- H_3 [type=s];
-    C_1 -- H_4 [type=s];
-    C_1 -- H_5 [type=s];
+#region load DLL for DOT (graphviz) language
+$dotlanguageDLL = Get-ChildItem -Path (join-path $env:USERPROFILE ".nuget\packages\dotlanguage.interactiveextension\") -Recurse -include *.dll  |
+     ForEach-Object {[System.Diagnostics.FileVersionInfo]::GetVersionInfo($_.FullName)} |
+        Sort-Object FileVersion  |
+            Select-object -last 1
+if (-not $dotlanguageDLL)  { Write-Error "Could not find the dotlanguage DLL you may need to run ' #r `"nuget: DotLanguage.InteractiveExtension, *-*`" ' in a c# cell" }
+else {
+    Add-Type -Path $dotlanguageDLL.FileName
+    [dotlanguage.InteractiveExtension.KernelExtension]::Load([Microsoft.DotNet.Interactive.KernelInvocationContext]::Current.HandlingKernel.RootKernel)
 }
-"@)   )
+#endregion
 
-#>
+function Out-DotLanguage {
+    <#
+      .DESCRIPTION
+        Accepts a DotLanguage chart definition as a parameter (example with the definition) or from the  pipeline
 
+        Has an alias of `DotLanguage` it can be called in a more dsl-y style);
 
-function Out-TreeView   {
+        .EXAMPLE
+        ps >DotLanguage @'
+        graph ethane {
+            C_0 -- H_0 [type=s];
+            C_0 -- H_1 [type=s];
+            C_0 -- H_2 [type=s];
+            C_0 -- C_1 [type=s];
+            C_1 -- H_3 [type=s];
+            C_1 -- H_4 [type=s];
+            C_1 -- H_5 [type=s];
+        }
+        '@
+
+        Outputs a sample diagram
+    #>
+    [alias('DotLanguage')]
+    param   (
+        [parameter(ValueFromPipeline=$true,Mandatory=$true,Position=0)]
+        $Text
+    )
+    begin   {$DotLanguage = "" }
+    process {$DotLanguage +=  ("`r`n" + $Text -replace '^[\r\n]+','' -replace '[\r\n]+$','') }
+    end     {
+    $kernel  = [DotLanguage.InteractiveExtension.DotLanguageKernel]::Current.ParentKernel | where name -eq "dot"
+    $command = [Microsoft.DotNet.Interactive.Commands.SubmitCode]::new($DotLanguage)
+    $task = $kernel.SendAsync($command)
+    }
+}
+
+function Out-TreeView    {
     <#
       .SYNOPSIS
         Outputs a treeview to a notebook.
@@ -554,11 +577,12 @@ function ConvertTo-TabularDataResource {
     }
 }
 
+#region load DLLs for nteract and SandDance
 $nteractDLL = Get-ChildItem -Path (join-path $env:USERPROFILE ".nuget\packages\nteract.interactiveextension\") -Recurse -include *.dll  |
      ForEach-Object {[System.Diagnostics.FileVersionInfo]::GetVersionInfo($_.FullName)} |
         Sort-Object FileVersion  |
             Select-object -last 1
-if (-not $nteractDLL)  { Write-Error "Could not find the nteractdll you may need to run ' #r `"nuget: nteract.InteractiveExtension, 1.0.91`" ' in a c# cell" }
+if (-not $nteractDLL)  { Write-Error "Could not find the nteract .dll file. You may need to run ' #r `"nuget: nteract.InteractiveExtension, 1.0.91`" ' in a c# cell" }
 else {
     Add-Type -Path $nteractDLL.FileName
     [nteract.InteractiveExtension.KernelExtension]::Load([Microsoft.DotNet.Interactive.KernelInvocationContext]::Current.HandlingKernel.RootKernel)
@@ -568,10 +592,12 @@ $sanddanceDLL = Get-ChildItem -Path (join-path $env:USERPROFILE ".nuget\packages
      ForEach-Object {[System.Diagnostics.FileVersionInfo]::GetVersionInfo($_.FullName)} |
         Sort-Object FileVersion  |
             Select-object -last 1
-if (-not $sanddanceDLL)  { Write-Error "Could not find the sanddancedll you may need to run ' #r `"nuget: sanddance.InteractiveExtension`" ' in a c# cell" }
+if (-not $sanddanceDLL)  { Write-Error "Could not find the sanddance .dll file. Y may need to run ' #r `"nuget: sanddance.InteractiveExtension`" ' in a c# cell" }
 else {
     Add-Type -Path $sanddanceDLL.FileName
     [sanddance.InteractiveExtension.KernelExtension]::Load([Microsoft.DotNet.Interactive.KernelInvocationContext]::Current.HandlingKernel.RootKernel)
 }
+#endregion
 
+#Extend TDR to have explore with nteract & with SandDance and extend dataTable to have both using convert to TDR.
 Update-TypeData -AppendPath (Join-path $PSScriptRoot "notebook.Types.Ps1xml")
